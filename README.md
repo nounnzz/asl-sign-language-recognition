@@ -67,7 +67,7 @@ python asl_recognition.py
 
 ## 📊 Data Format
 
-`data/landmarks.csv` — each row is one sample:
+`data/landmarks.csv` - each row is one sample:
 
 ```
 label, f0, f1, f2, ..., f62
