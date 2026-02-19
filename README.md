@@ -1,0 +1,190 @@
+# 🤟 Real-Time ASL Sign Language Recognition
+
+A real-time American Sign Language (ASL) alphabet recognizer using **MediaPipe Hands** + **TensorFlow/Keras**. Classifies all 24 static ASL letters (A–Y, excluding J and Z which require motion).
+
+---
+
+## 📁 Project Structure
+
+```
+asl_sign_language/
+├── asl_recognition.py    ← Main real-time inference app
+├── train_model.py        ← Model training script
+├── collect_data.py       ← Webcam data collection tool
+├── requirements.txt
+├── README.md
+├── data/
+│   └── landmarks.csv     ← Your collected training data (created by collect_data.py)
+└── model/
+    ├── asl_model.keras   ← Trained model (created by train_model.py)
+    └── training_curves.png
+```
+
+---
+
+## ⚙️ Setup
+
+### 1. Create a virtual environment (recommended)
+```bash
+python -m venv venv
+source venv/bin/activate        # Mac/Linux
+venv\Scripts\activate           # Windows
+```
+
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+> **Python 3.9–3.11 recommended.** TensorFlow 2.x supports these versions best.
+
+---
+
+## 🚀 Quick Start
+
+### Option A — Use a pre-existing dataset (fastest)
+
+Download the [Kaggle ASL Alphabet dataset](https://www.kaggle.com/datasets/grassknoted/asl-alphabet) or the [Sign Language MNIST](https://www.kaggle.com/datasets/datamunge/sign-language-mnist) and convert to landmark CSV format (see **Data Format** below), then:
+
+```bash
+python train_model.py --data data/landmarks.csv --epochs 50
+python asl_recognition.py
+```
+
+### Option B — Collect your own data (best accuracy for you)
+
+```bash
+# Step 1: Collect ~100 samples per letter via webcam
+python collect_data.py --samples 100
+
+# Step 2: Train the model
+python train_model.py --data data/landmarks.csv --epochs 40
+
+# Step 3: Run real-time recognition
+python asl_recognition.py
+```
+
+### Option C — Synthetic demo (just to test the pipeline)
+
+```bash
+python train_model.py          # generates fake data, trains, saves model
+python asl_recognition.py      # runs — won't recognize real hands (synthetic data only)
+```
+
+---
+
+## 🎮 Controls (asl_recognition.py)
+
+| Key       | Action                              |
+|-----------|-------------------------------------|
+| `SPACE`   | Add current stable letter to word   |
+| `BKSP`    | Delete last letter from word        |
+| `C`       | Clear word buffer                   |
+| `Q / ESC` | Quit                                |
+
+---
+
+## 📊 Data Format
+
+`data/landmarks.csv` — each row is one sample:
+
+```
+label, f0, f1, f2, ..., f62
+A, 0.012, -0.043, 0.001, ...   ← 63 normalized landmark values
+B, 0.023, -0.011, 0.002, ...
+```
+
+- **Label**: Capital letter (A–Y, excluding J)
+- **f0–f62**: 63 normalized landmark coordinates (21 landmarks × x, y, z), wrist-relative and unit-scaled
+
+To convert the Sign Language MNIST (pixel images) to landmark CSV, use MediaPipe to extract landmarks from each image and save in this format.
+
+---
+
+## 🧠 How It Works
+
+```
+Webcam frame
+     │
+     ▼
+MediaPipe Hands
+     │  detects 21 hand keypoints (x, y, z)
+     ▼
+Landmark Normalization
+     │  subtract wrist, divide by max abs value → 63 features
+     ▼
+Keras MLP Classifier
+     │  Input(63) → Dense(256) → BN → Dropout
+     │            → Dense(128) → BN → Dropout
+     │            → Dense(64)  → Dropout
+     │            → Dense(24, softmax)
+     ▼
+Smoothing (majority vote, window=5)
+     │
+     ▼
+Predicted ASL Letter + Confidence
+```
+
+**Why landmarks instead of raw pixels?**
+- ✅ Lighting invariant
+- ✅ Position / scale invariant
+- ✅ ~10× faster than CNN on images
+- ✅ Very lightweight model (~200KB)
+
+---
+
+## 🎯 Expected Accuracy
+
+| Data source              | Expected val accuracy |
+|--------------------------|-----------------------|
+| Your own collected data  | 95–99%               |
+| Community landmark CSV   | 90–97%               |
+| Synthetic (demo)         | N/A (fake data)      |
+
+---
+
+## 🛠 Tuning Options
+
+```bash
+# Adjust confidence threshold (default 0.80)
+python asl_recognition.py --confidence 0.85
+
+# Use different camera (e.g., external webcam)
+python asl_recognition.py --camera 1
+
+# Adjust smoothing window
+python asl_recognition.py --smooth 7
+
+# Full options
+python asl_recognition.py --help
+```
+
+---
+
+## 📦 Notable Dependencies
+
+| Package         | Role                                |
+|-----------------|-------------------------------------|
+| `mediapipe`     | Real-time hand landmark detection   |
+| `tensorflow`    | Keras model training & inference    |
+| `opencv-python` | Webcam capture & UI rendering       |
+| `scikit-learn`  | Train/val split, label encoding     |
+| `matplotlib`    | Training curve plots                |
+
+---
+
+## 🔮 Possible Extensions
+
+- Add **J and Z** using landmark motion/velocity features
+- Add **word prediction** using a language model
+- Export to **TensorFlow Lite** for mobile deployment
+- Add **sentence builder** with grammar suggestions
+- Build a **web app** using TensorFlow.js
+
+---
+
+## ⚠️ Notes
+
+- **J and Z** are excluded because they require hand motion (temporal information), not just a static pose.
+- The `model/asl_model.keras` file is generated by `train_model.py` — it is not included in the repo.
+- For best results, collect data in similar lighting conditions to where you'll use the app.
