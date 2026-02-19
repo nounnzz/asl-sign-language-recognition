@@ -39,7 +39,7 @@ pip install -r requirements.txt
 
 ---
 
-## 🚀 Collect your own data (best accuracy for you)
+## 🚀 Collect your own data
 
 ```bash
 # Step 1: Collect ~100 samples per letter via webcam
