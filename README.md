@@ -114,16 +114,6 @@ Predicted ASL Letter + Confidence
 
 ---
 
-## 🎯 Expected Accuracy
-
-| Data source              | Expected val accuracy |
-|--------------------------|-----------------------|
-| Your own collected data  | 95–99%               |
-| Community landmark CSV   | 90–97%               |
-| Synthetic (demo)         | N/A (fake data)      |
-
----
-
 ## 🛠 Tuning Options
 
 ```bash
