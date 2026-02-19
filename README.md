@@ -1,6 +1,6 @@
 # 🤟 Real-Time ASL Sign Language Recognition
 
-A real-time American Sign Language (ASL) alphabet recognizer using **MediaPipe Hands** + **TensorFlow/Keras**. Classifies all 24 static ASL letters (A–Y, excluding J and Z which require motion).
+A real-time American Sign Language (ASL) alphabet recognizer using **MediaPipe Hands** + **TensorFlow/Keras**. Classifies all 24 static ASL letters (A through Y, excluding J and Z which require motion).
 
 ---
 
@@ -27,7 +27,6 @@ asl_sign_language/
 ### 1. Create a virtual environment (recommended)
 ```bash
 python -m venv venv
-source venv/bin/activate        # Mac/Linux
 venv\Scripts\activate           # Windows
 ```
 
@@ -40,18 +39,7 @@ pip install -r requirements.txt
 
 ---
 
-## 🚀 Quick Start
-
-### Option A — Use a pre-existing dataset (fastest)
-
-Download the [Kaggle ASL Alphabet dataset](https://www.kaggle.com/datasets/grassknoted/asl-alphabet) or the [Sign Language MNIST](https://www.kaggle.com/datasets/datamunge/sign-language-mnist) and convert to landmark CSV format (see **Data Format** below), then:
-
-```bash
-python train_model.py --data data/landmarks.csv --epochs 50
-python asl_recognition.py
-```
-
-### Option B — Collect your own data (best accuracy for you)
+## 🚀 Collect your own data (best accuracy for you)
 
 ```bash
 # Step 1: Collect ~100 samples per letter via webcam
@@ -62,13 +50,6 @@ python train_model.py --data data/landmarks.csv --epochs 40
 
 # Step 3: Run real-time recognition
 python asl_recognition.py
-```
-
-### Option C — Synthetic demo (just to test the pipeline)
-
-```bash
-python train_model.py          # generates fake data, trains, saves model
-python asl_recognition.py      # runs — won't recognize real hands (synthetic data only)
 ```
 
 ---
@@ -126,10 +107,10 @@ Predicted ASL Letter + Confidence
 ```
 
 **Why landmarks instead of raw pixels?**
-- ✅ Lighting invariant
-- ✅ Position / scale invariant
-- ✅ ~10× faster than CNN on images
-- ✅ Very lightweight model (~200KB)
+- Lighting invariant
+- Position / scale invariant
+- ~10× faster than CNN on images
+- Very lightweight model (~200KB)
 
 ---
 
