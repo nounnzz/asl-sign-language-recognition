@@ -155,6 +155,12 @@ python asl_recognition.py --help
 
 ---
 
+## Screenshots
+<img width="725" height="410" alt="image" src="https://github.com/user-attachments/assets/c39d3c26-70e6-451a-9034-3d6641d23685" />
+
+
+---
+
 ## ⚠️ Disclaimers
 
 - **J and Z** are excluded because they require hand motion (temporal information), not just a static pose.
